@@ -1,9 +1,8 @@
 import datetime
-
+from helper import Helper
 import requests
 from bs4 import BeautifulSoup
-
-
+from DbOps import DbOperations
 class pemex(object):
 
     def __init__(self,url):
@@ -39,35 +38,22 @@ class pemex(object):
             data = []
             boxs = soup.find_all("div",{"class":'news-box span3 left'})
             for box in boxs:
-                datadict = {}
+                datadict = Helper.get_news_dict()
                 datadict.update({"newsurl":"https://www.pemex.com"+box.find("a")['href']})
                 description = self.fetchDescription("https://www.pemex.com" + box.find("a")['href'])
                 datadict.update({
-                    "publishedAt_scrapped": datetime.datetime.now(),
                     "url": self.url,
                     "date": box.find("p",{"class":"news-meta news-date"}).text,
                     "news_provider": "pemex",
-                    "formatted_text": "",
-                    "is_scrapped": 1,
-                    "news_url_uid": "",
-                    "ticker": "",
                     "formatted_sub_header": box.find("div",{"class":"ms-WPBody h2"}).text,
                     "publishedAt": box.find("p",{"class":"news-meta news-date"}).text,
-                    "industry_name": "",
                     "description": description,
-                    "filetype": "",
                     "title": box.find("div",{"class":"ms-WPBody h2"}).text,
-                    "text": "",
-                    "company_id": "",
-                    "news_title_uid": "",
-                    "topic_name": "",
-                    "link": self.url,
-                    "sub_header": "",
-                    "is_used": 1
+                    "link": self.url
                 })
                 data.append(datadict)
 
-
+            DbOperations.InsertIntoMongo("pemex_news",data)
         except Exception as e:
             print (e)
 
