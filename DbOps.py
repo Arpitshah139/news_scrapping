@@ -105,3 +105,28 @@ class DbOperations(object):
 
         return returnvalue
 
+    @staticmethod
+    def Get_object_for_bulkop(isordered, collection_name, count=0):
+
+        """
+        :param isordered: true of false
+        :return: if true returns an bulk object of ordered else object for unordered
+        """
+
+        bulkop = None
+        try:
+            clientConn = DbOperations.GetConnection(DbName.DsyhMongo)
+            if (isordered):
+                bulkop = clientConn[collection_name].initialize_ordered_bulk_op()
+            else:
+                bulkop = clientConn[collection_name].initialize_unordered_bulk_op()
+        except (ServerSelectionTimeoutError, OperationFailure) as e:
+            print (e)
+            if count < 5:
+                time.sleep(5)
+                DbOperations.Get_object_for_bulkop(isordered, collection_name, count + 1)
+            elif count >= 5:
+                print ("maximum try exceeds")
+                exit(0)
+        return bulkop
+
