@@ -1,6 +1,5 @@
 import requests
 from helper import Helper
-import datetime
 from bs4 import BeautifulSoup
 from DbOps import *
 
