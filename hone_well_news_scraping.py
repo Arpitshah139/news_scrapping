@@ -1,6 +1,5 @@
 import requests
 from helper import Helper
-import datetime
 from bs4 import BeautifulSoup
 from DbOps import *
 
@@ -15,7 +14,7 @@ class honey_well(object):
         response = requests.get(self.url, headers=header)
         soup = BeautifulSoup(response.content, 'html.parser')
         bulk_obj = DbOperations.Get_object_for_bulkop(False,'honey_well_news')
-        for news in soup.find_all('div', {'class': "col-md-4 cg-item d-none"})[:4]:
+        for news in soup.find_all('div', {'class': "col-md-4 cg-item d-none"}):
             title_data = news.find('h4', {'class': "header5 give-ellipsis-after-3lines"})
             if title_data:
                 title = title_data.text
@@ -37,11 +36,11 @@ class honey_well(object):
             else:
                 description = ''
             news_dict = Helper.get_news_dict()
-            news_dict.update({"tit"})
+            news_dict.update({"title":title,"url":url,"formatted_sub_header":title,"description":description,"link":url,"news_provider":"honeywell"})
 
             bulk_obj.insert(news_dict)
 
-            if len(bulk_obj._BulkOperationBuilder__bulk.__dict__['ops']) >2:
+            if len(bulk_obj._BulkOperationBuilder__bulk.__dict__['ops']) >100:
                 bulk_obj.execute()
                 bulk_obj = DbOperations.Get_object_for_bulkop(False,'honey_well_news')
 

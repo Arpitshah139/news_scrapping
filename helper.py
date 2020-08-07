@@ -1,4 +1,5 @@
 import datetime
+import pandas as pd
 
 class Helper(object):
 
@@ -27,3 +28,14 @@ class Helper(object):
                 "sub_header": "",
                 "is_used": 1
             }
+
+    @staticmethod
+    def parse_date(date_string, format=None):
+            if format is not None:
+                    return pd.to_datetime(date_string, format=format)
+            elif ((date_string.find('-') <= 2 and date_string.find('.') == -1 and date_string.find('/') == -1) or (
+                    date_string.find('.') <= 2 and date_string.find('-') == -1 and date_string.find('/') == -1) or (
+                          date_string.find('/') <= 2 and date_string.find('-') == -1 and date_string.find('.') == -1)):
+                    return pd.to_datetime(date_string, dayfirst=True)
+            else:
+                    return pd.to_datetime(date_string, yearfirst=True)
