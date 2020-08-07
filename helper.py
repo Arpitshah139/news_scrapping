@@ -13,7 +13,7 @@ class Helper(object):
                 "formatted_text": "",
                 "is_scrapped": 1,
                 "news_url_uid": "",
-                "ticker": "",
+                "ticker": "News",
                 "formatted_sub_header": "",
                 "publishedAt": "",
                 "industry_name": "",
@@ -23,7 +23,7 @@ class Helper(object):
                 "text": "",
                 "company_id": "",
                 "news_title_uid": "",
-                "topic_name": "",
+                "topic_name": "News",
                 "link": "",
                 "sub_header": "",
                 "is_used": 1
