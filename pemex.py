@@ -24,7 +24,7 @@ class pemex(object):
                     "date": box.find("p",{"class":"news-meta news-date"}).text,
                     "news_provider": "pemex",
                     "formatted_sub_header": box.find("div",{"class":"ms-WPBody h2"}).text,
-                    "publishedAt": box.find("p",{"class":"news-meta news-date"}).text,
+                    "publishedAt": Helper.parse_date(box.find("p",{"class":"news-meta news-date"}).text),
                     "description": description,
                     "title": box.find("div",{"class":"ms-WPBody h2"}).text,
                     "link": self.url

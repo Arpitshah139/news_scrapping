@@ -24,7 +24,7 @@ class TI(object):
                     "date": new.find("div",{"class":"rel-date"}).text,
                     "news_provider": "TEXAS INSTRUMENTS INC",
                     "formatted_sub_header": new.find("div",{"class":"abstract"}).text if new.find("div",{"class":"abstract"}) is not None else '',
-                    "publishedAt": new.find("div",{"class":"rel-date"}).text,
+                    "publishedAt": Helper.parse_date((new.find("div",{"class":"rel-date"}).text).split("|")[0]),
                     "description": description,
                     "title": new.find("div",{"class":"abstract"}).text if new.find("div",{"class":"abstract"}) is not None else '',
                     "link": self.url
