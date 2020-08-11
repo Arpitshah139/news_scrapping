@@ -19,8 +19,6 @@ class pemex(object):
             for box in boxs:
                 datadict = Helper.get_news_dict()
                 datadict.update({"url":"https://www.pemex.com"+box.find("a")['href']})
-                print(hashlib.md5("https://www.pemex.com"+box.find("a")['href'].encode()).hexdigest())
-                sys.exit()
                 description = self.fetchDescription("https://www.pemex.com" + box.find("a")['href'])
                 datadict.update({
                     "date": box.find("p",{"class":"news-meta news-date"}).text,
@@ -32,7 +30,7 @@ class pemex(object):
                     "link": self.url,
                     "text":description,
                     "company_id" : "pemex",
-                    "news_url_uid" : hashlib.md5("https://www.pemex.com"+box.find("a")['href'].encode()).hexdigest()
+                    "news_url_uid" : hashlib.md5(("https://www.pemex.com"+box.find("a")['href']).encode()).hexdigest()
 
                 })
                 data.append(datadict)
