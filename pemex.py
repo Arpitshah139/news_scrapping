@@ -3,6 +3,7 @@ from helper import Helper
 import requests
 from bs4 import BeautifulSoup
 from crawler import *
+import hashlib
 
 class pemex(object):
 
@@ -17,17 +18,20 @@ class pemex(object):
             boxs = soup.find_all("div",{"class":'news-box span3 left'})
             for box in boxs:
                 datadict = Helper.get_news_dict()
-                datadict.update({"newsurl":"https://www.pemex.com"+box.find("a")['href']})
+                datadict.update({"url":"https://www.pemex.com"+box.find("a")['href']})
                 description = self.fetchDescription("https://www.pemex.com" + box.find("a")['href'])
                 datadict.update({
-                    "url": self.url,
                     "date": box.find("p",{"class":"news-meta news-date"}).text,
                     "news_provider": "pemex",
                     "formatted_sub_header": box.find("div",{"class":"ms-WPBody h2"}).text,
                     "publishedAt": Helper.parse_date(box.find("p",{"class":"news-meta news-date"}).text),
                     "description": description,
                     "title": box.find("div",{"class":"ms-WPBody h2"}).text,
-                    "link": self.url
+                    "link": self.url,
+                    "text":description,
+                    "company_id" : "pemex",
+                    "news_url_uid" : hashlib.md5(("https://www.pemex.com"+box.find("a")['href']).encode()).hexdigest()
+
                 })
                 data.append(datadict)
 
