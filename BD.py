@@ -7,9 +7,9 @@ import hashlib
 
 class BD(object):
 
-    def __init__(self,url):
+    def __init__(self,url,body=None):
         self.url = url
-
+        self.body = body
     def crawler(self):
         try:
             counter = 1
