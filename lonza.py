@@ -5,7 +5,7 @@ from DbOps import DbOperations
 import re
 import hashlib
 
-class meggitt(object):
+class lonza(object):
     def __init__(self,url,body=None,headers=None):
         self.url = url
         self.body = body
@@ -16,29 +16,28 @@ class meggitt(object):
         while loop:
             response = crawler.MakeRequest(self.url.format(page=page),'Get',postData=self.body,headers=self.headers)
             soup = BeautifulSoup(response.content, 'html.parser')
-            bulk_obj = DbOperations.Get_object_for_bulkop(False,'meggitt_news')
-            news_data = soup.find_all('div', {'class': "news_list_item"})
+            bulk_obj = DbOperations.Get_object_for_bulkop(False,'lonza_news')
+            news_data = soup.find('section', {'class': "cmp-list news-list"})
             if news_data:
-                for news in news_data:
+                for news in news_data.find_all('div',{'class','col-12'}):
                     news_dict = Helper.get_news_dict()
 
-                    title_data = news.find('h4')
+                    title_data = news.find('div',{'class':"search-result-title"})
                     title = title_data.text if title_data else ""
 
                     url_data = news.find('a', {'href': True})
-                    url = url_data['href'] if url_data else ''
+                    url = "https://www.lonza.com"+str(url_data['href']) if url_data else ''
 
-                    publish_date_data = news.find('h5')
-                    publish_date_data.span.decompose()
-                    publish_date = Helper.parse_date(str(publish_date_data.text).split('\n')[0]) if publish_date_data and publish_date_data.text != '' else ''
+                    publish_date_data = news.find('div',{'class':'search-result-label'})
+                    publish_date = Helper.parse_date(publish_date_data.text) if publish_date_data and publish_date_data.text != '' else ''
 
                     url_response = crawler.MakeRequest(url, 'Get', postData=self.body, headers=self.headers)
                     url_soup = BeautifulSoup(url_response.content, 'html.parser')
-                    description_data = url_soup.find('div',{'class':"pf-content"})
+                    description_data = url_soup.find('section',{'class':"cmp-news-listing"})
 
                     description = []
                     regex = re.compile(r'[\n\xa0]')
-                    for desc in description_data.find_all('p'):
+                    for desc in description_data.find_all('li'):
                         description.append(regex.sub("", str(desc.text)))
                     description= ''.join(description)
 
@@ -47,14 +46,14 @@ class meggitt(object):
                          "url": url, "link": url, "news_url_uid": hashlib.md5(url.encode()).hexdigest(),
                          "description": description, "text": description,
                          "publishedAt": publish_date, 'date': publish_date, "publishedAt_scrapped": publish_date,
-                         "company_id": "meggitt", "ticker": "meggitt_scrapped", "industry_name": "meggitt",
-                         "news_provider": "meggitt"})
+                         "company_id": "lonza", "ticker": "lonza_scrapped", "industry_name": "lonza",
+                         "news_provider": "lonza"})
 
                     bulk_obj.insert(news_dict)
 
                     if len(bulk_obj._BulkOperationBuilder__bulk.__dict__['ops']) >100:
                         bulk_obj.execute()
-                        bulk_obj = DbOperations.Get_object_for_bulkop(False,'meggitt_news')
+                        bulk_obj = DbOperations.Get_object_for_bulkop(False,'lonza_news')
 
                 if len(bulk_obj._BulkOperationBuilder__bulk.__dict__['ops']) > 0:
                     bulk_obj.execute()
@@ -64,6 +63,6 @@ class meggitt(object):
                 print("News Not Found")
                 loop = False
 
-url = "https://www.meggitt.com/news/?_sfm_year=2020&sf_paged={page}"
-news_obj = meggitt(url)
+url = "https://www.lonza.com/news-and-media/news-archive?q=*&rows=25&t_year_s=2020&pg={page}"
+news_obj = lonza(url)
 news_obj.crawler_news()
