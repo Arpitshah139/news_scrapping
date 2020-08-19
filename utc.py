@@ -42,8 +42,6 @@ class rtx(object):
                         "news_url_uid" : hashlib.md5(("https://www.rtx.com"+box.find("a")['href']).encode()).hexdigest()
 
                     })
-                    print(datadict)
-                    sys.exit()
                     bulk_obj.insert(datadict)
 
                     if len(bulk_obj._BulkOperationBuilder__bulk.__dict__['ops']) > 100:
